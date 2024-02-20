@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alquileres>
+    <alquiler>
+        <id>1</id>
+        <nombreInquilino>Ana García</nombreInquilino>
+        <direccionPiso>Calle Mayor, 12, 3ºA</direccionPiso>
+        <importeAlquiler>800</importeAlquiler>
+        <duracionContrato>12</duracionContrato>
+    </alquiler>
+    <alquiler>
+        <id>2</id>
+        <nombreInquilino>Pedro López</nombreInquilino>
+        <direccionPiso>Avenida del Sol, 23, 4ºB</direccionPiso>
+        <importeAlquiler>950</importeAlquiler>
+        <duracionContrato>18</duracionContrato>
+    </alquiler>
+    <alquiler>
+        <id>3</id>
+        <nombreInquilino>María Pérez</nombreInquilino>
+        <direccionPiso>Plaza de España, 5, 1ºD</direccionPiso>
+        <importeAlquiler>700</importeAlquiler>
+        <duracionContrato>12</duracionContrato>
+    </alquiler>
+    <alquiler>
+        <id>4</id>
+        <nombreInquilino>Juan Martínez</nombreInquilino>
+        <direccionPiso>Calle del Carmen, 10, 2ºA</direccionPiso>
+        <importeAlquiler>850</importeAlquiler>
+        <duracionContrato>24</duracionContrato>
+    </alquiler>
+    <alquiler>
+        <id>5</id>
+        <nombreInquilino>Rosa González</nombreInquilino>
+        <direccionPiso>Calle de la Luna, 3, 6ºB</direccionPiso>
+        <importeAlquiler>650</importeAlquiler>
+        <duracionContrato>12</duracionContrato>
+    </alquiler>
+</alquileres>
