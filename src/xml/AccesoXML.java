@@ -8,13 +8,12 @@ import objectDB.Alquiler;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
 public class AccesoXML {
-    public static void importarAlquileres(){
+    public static void importarAlquileres(EntityManagerFactory emf){
         XStream xStream = new XStream();
 
         xStream.alias("alquileres", ListaAlquileres.class);
@@ -28,7 +27,7 @@ public class AccesoXML {
         xStream.addPermission(AnyTypePermission.ANY);
 
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("src/data/alquileres.odb");
+
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
 
@@ -39,30 +38,26 @@ public class AccesoXML {
 
             List<Alquiler> listaAlquileres = objetoListaAlquileres.getListaAlquileres();
 
-            //Inicio la conexi�n con la base de datos indicada en la Factor�a
             conexion = emf.createEntityManager();
-
-            //Inicio transaccion
             transaccion = conexion.getTransaction();
             transaccion.begin();
+
+            conexion.createQuery("DELETE FROM Alquiler").executeUpdate();
 
             for(Alquiler alquiler: listaAlquileres){
                 System.out.println(alquiler.toString());
                 conexion.persist(alquiler);
             }
 
-            //Commit de la transacci�n (guardar operaciones)
             transaccion.commit();
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (_RollbackException e) {
-            //Rollback autom�tico al intentar insertar objetos con un id ya existente.
             System.err.println("Se ha producido un error en la inserci�n de los datos. "
                     + "La base de datos ya existe.");
         }
         catch (Exception e) {
-            //Si se ha producido un error antes del commit, forzamos un rollback.
             if(transaccion!=null) {
                 if (transaccion.isActive()) {
                     transaccion.rollback();
@@ -75,6 +70,5 @@ public class AccesoXML {
                 conexion.close();
             }
         }
-        emf.close();
     }
 }
