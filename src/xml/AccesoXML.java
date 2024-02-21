@@ -3,6 +3,7 @@ package xml;
 import com.objectdb.o._RollbackException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import entrada.Teclado;
 import objectDB.Alquiler;
 
 import javax.persistence.EntityManager;
@@ -13,6 +14,44 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class AccesoXML {
+
+    private static void menuXML() {
+        System.out.print("\n------");
+        System.out.print("  Submenú Gestión de Información en XML  ");
+        System.out.println("------");
+        System.out.println("a. Exportar");
+        System.out.println("b. Importar");
+        System.out.println("x. Volver al menú principal");
+    }
+
+
+
+
+    public static void accionesXML(EntityManagerFactory emf){
+        String opcion = "";
+
+        do {
+            menuXML();
+            opcion = Teclado.leerCadena("Elija una opción: ");
+
+            switch (opcion) {
+                case "a":
+                    break;
+                case "b":
+                    importarAlquileres(emf);
+                    break;
+                case "x":
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("x"));
+    }
+
+
+
+
     public static void importarAlquileres(EntityManagerFactory emf){
         XStream xStream = new XStream();
 
@@ -45,9 +84,9 @@ public class AccesoXML {
             conexion.createQuery("DELETE FROM Alquiler").executeUpdate();
 
             for(Alquiler alquiler: listaAlquileres){
-                System.out.println(alquiler.toString());
                 conexion.persist(alquiler);
             }
+            System.out.println("Número de alquileres importados: " + listaAlquileres.size());
 
             transaccion.commit();
 

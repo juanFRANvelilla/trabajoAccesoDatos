@@ -8,9 +8,9 @@ import javax.persistence.Persistence;
 public class Main {
 
     public static void menu(){
-        System.out.print("-----------------");
-        System.out.print("Menú Principal");
-        System.out.println("-----------------");
+        System.out.print("\n----------------");
+        System.out.print("  Menú Principal  ");
+        System.out.println("----------------");
         System.out.println("1. Registro de Alquileres (con ObjectDB)");
         System.out.println("2. Registro de Comentarios (con Neodatis)");
         System.out.println("3. Registro de Servicios Asociados (con existDB)");
@@ -21,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("src/data/alquileres.odb");
-//        AccesoXML.importarAlquileres(emf);
+
         int opcion = 0;
 
         do {
@@ -36,6 +36,7 @@ public class Main {
                 case 3:
                     break;
                 case 4:
+                    AccesoXML.accionesXML(emf);
                     break;
                 case 5:
                     break;

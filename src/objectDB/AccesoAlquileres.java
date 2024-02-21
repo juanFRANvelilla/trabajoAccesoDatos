@@ -7,9 +7,9 @@ import java.util.List;
 
 public class AccesoAlquileres {
     private static void menuObjectDB(){
-        System.out.println("--------------------------");
-        System.out.println("  Submenú de Alquileres  ");
-        System.out.println("--------------------------");
+        System.out.print("\n---------");
+        System.out.print("  Submenú de Alquileres  ");
+        System.out.println("---------");
         System.out.println("a. Insertar alquiler");
         System.out.println("b. Actualizar alquiler");
         System.out.println("c. Eliminar alquiler");
@@ -22,6 +22,7 @@ public class AccesoAlquileres {
     public static void accionesAlquileres(EntityManagerFactory emf) {
         String opcion = "";
         int id;
+        String nombrePropietario;
         do{
             menuObjectDB();
             opcion = Teclado.leerCadena("Elija una opción: ");
@@ -43,8 +44,11 @@ public class AccesoAlquileres {
                     listarAlquileres(emf);
                     break;
                 case "e":
+                    nombrePropietario = Teclado.leerCadena("Nombre del propietario del que desees consultar alquileres: ");
+                    listarAlquilerByNombre(emf,nombrePropietario);
                     break;
                 case "x":
+                    System.out.println("Volviendo al menú principal...");
                     break;
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
@@ -53,6 +57,33 @@ public class AccesoAlquileres {
 
         } while (!opcion.equals("x"));
 
+    }
+
+    private static void listarAlquilerByNombre(EntityManagerFactory emf, String nombrePropietario) {
+        EntityManager conexion = null;
+
+        try {
+            conexion = emf.createEntityManager();
+            
+            String sentenciaJPQL = "SELECT a FROM Alquiler a WHERE a.nombreInquilino = :nombre";
+            TypedQuery<Alquiler> consulta = conexion.createQuery(sentenciaJPQL, Alquiler.class);
+            consulta.setParameter("nombre", nombrePropietario);
+            List<Alquiler> alquileres = consulta.getResultList();
+
+            if(alquileres.size() == 0){
+                System.out.println("No se ha encontrado ningun alquiler con nombre de propietario: " + nombrePropietario);
+            } else {
+                for(Alquiler alquiler: alquileres){
+                    System.out.println(alquiler.toString());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al realizar la consulta: " + e.getMessage());
+        } finally {
+            if (conexion != null && conexion.isOpen()) {
+                conexion.close();
+            }
+        }
     }
 
     private static void eliminarAlquiler(EntityManagerFactory emf, int id) {
