@@ -31,7 +31,7 @@ public class Main {
             opcion = Teclado.leerEntero("Elija una opción: ");
             switch (opcion) {
                 case 1:
-                    AccesoAlquileres.accionesAlquileres(emf);
+                    accionesAlquileres(emf);
                     break;
                 case 2:
                     break;
@@ -50,6 +50,71 @@ public class Main {
         }
         while (opcion != 5) ;
         emf.close();
+    }
+
+    private static void menuObjectDB(){
+        System.out.print("\n---------");
+        System.out.print("  Submenú de Alquileres  ");
+        System.out.println("---------");
+        System.out.println("a. Insertar alquiler");
+        System.out.println("b. Actualizar alquiler");
+        System.out.println("c. Eliminar alquiler");
+        System.out.println("d. Listar alquileres");
+        System.out.println("e. Buscar alquiler por nombre de inquilino");
+        System.out.println("x. Volver al Menú Principal");
+        System.out.println("");
+    }
+
+    public static void accionesAlquileres(EntityManagerFactory emf) {
+        String opcion = "";
+        int id;
+        String nombrePropietario;
+        Alquiler alquiler;
+        do{
+            menuObjectDB();
+            opcion = Teclado.leerCadena("Elija una opción: ");
+            switch (opcion) {
+                case "a":
+                    if(AccesoAlquileres.insertarAlquiler(emf)){
+                        System.out.println("Alquiler agregado con éxito.");
+                    }
+                    else{
+                        System.out.println("Se ha producido un error al insertar el nuevo alquiler.");
+                    }
+                    break;
+                case "b":
+                    AccesoAlquileres.listarAlquileres(emf);
+                    id = Teclado.leerEntero("ID del alquiler a actualizar: ");
+                    alquiler = AccesoAlquileres.actualizarAlquilerId(emf, id);
+                    if(alquiler != null){
+                        System.out.println("Se ha actualizado el alquiler: \n" + alquiler.toString());
+                    }
+                    else{
+                        System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
+                    }
+                    break;
+                case "c":
+                    AccesoAlquileres.listarAlquileres(emf);
+                    id = Teclado.leerEntero("ID del alquiler a eliminar: ");
+                    AccesoAlquileres.eliminarAlquiler(emf, id);
+                    break;
+                case "d":
+                    AccesoAlquileres.listarAlquileres(emf);
+                    break;
+                case "e":
+                    nombrePropietario = Teclado.leerCadena("Nombre del propietario del que desees consultar alquileres: ");
+                    AccesoAlquileres.listarAlquilerByNombre(emf,nombrePropietario);
+                    break;
+                case "x":
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+                    break;
+            }
+
+        } while (!opcion.equals("x"));
+
     }
 
     private static void menuXML() {

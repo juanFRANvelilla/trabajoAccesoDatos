@@ -6,60 +6,9 @@ import javax.persistence.*;
 import java.util.List;
 
 public class AccesoAlquileres {
-    private static void menuObjectDB(){
-        System.out.print("\n---------");
-        System.out.print("  Submenú de Alquileres  ");
-        System.out.println("---------");
-        System.out.println("a. Insertar alquiler");
-        System.out.println("b. Actualizar alquiler");
-        System.out.println("c. Eliminar alquiler");
-        System.out.println("d. Listar alquileres");
-        System.out.println("e. Buscar alquiler por nombre de inquilino");
-        System.out.println("x. Volver al Menú Principal");
-        System.out.println("");
-    }
 
-    public static void accionesAlquileres(EntityManagerFactory emf) {
-        String opcion = "";
-        int id;
-        String nombrePropietario;
-        do{
-            menuObjectDB();
-            opcion = Teclado.leerCadena("Elija una opción: ");
-            switch (opcion) {
-                case "a":
-                    insertarAlquiler(emf);
-                    break;
-                case "b":
-                    listarAlquileres(emf);
-                    id = Teclado.leerEntero("ID del alquiler a actualizar: ");
-                    actualizarAlquilerId(emf, id);
-                    break;
-                case "c":
-                    listarAlquileres(emf);
-                    id = Teclado.leerEntero("ID del alquiler a eliminar: ");
-                    eliminarAlquiler(emf, id);
-                    break;
-                case "d":
-                    listarAlquileres(emf);
-                    break;
-                case "e":
-                    nombrePropietario = Teclado.leerCadena("Nombre del propietario del que desees consultar alquileres: ");
-                    listarAlquilerByNombre(emf,nombrePropietario);
-                    break;
-                case "x":
-                    System.out.println("Volviendo al menú principal...");
-                    break;
-                default:
-                    System.out.println("Opción no válida. Intente de nuevo.");
-                    break;
-            }
 
-        } while (!opcion.equals("x"));
-
-    }
-
-    private static void listarAlquilerByNombre(EntityManagerFactory emf, String nombrePropietario) {
+    public static void listarAlquilerByNombre(EntityManagerFactory emf, String nombrePropietario) {
         EntityManager conexion = null;
 
         try {
@@ -86,7 +35,7 @@ public class AccesoAlquileres {
         }
     }
 
-    private static void eliminarAlquiler(EntityManagerFactory emf, int id) {
+    public static void eliminarAlquiler(EntityManagerFactory emf, int id) {
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
 
@@ -120,7 +69,8 @@ public class AccesoAlquileres {
         }
     }
 
-    private static void actualizarAlquilerId(EntityManagerFactory emf, int id) {
+    public static Alquiler actualizarAlquilerId(EntityManagerFactory emf, int id) {
+        Alquiler alquiler = null;
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
 
@@ -134,7 +84,7 @@ public class AccesoAlquileres {
 
             List<Alquiler> alquileres = consulta.getResultList();
 
-            Alquiler alquiler = alquileres.get(0);
+            alquiler = alquileres.get(0);
             Alquiler nuevoAlquiler = nuevoAlquiler();
 
             transaccion = conexion.getTransaction();
@@ -145,17 +95,16 @@ public class AccesoAlquileres {
             alquiler.setDuracionContrato(nuevoAlquiler.getDuracionContrato());
             transaccion.commit();
 
-            System.out.println("Se ha actualizado el alquiler: \n" + alquiler.toString());
         } catch (Exception e) {
             if (transaccion != null) {
                 transaccion.rollback();
             }
-            System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
         } finally {
             if (conexion != null) {
                 conexion.close();
             }
         }
+        return alquiler;
     }
 
     private static Alquiler nuevoAlquiler(){
@@ -192,11 +141,11 @@ public class AccesoAlquileres {
     }
 
 
-    public static void insertarAlquiler(EntityManagerFactory emf) {
+    public static boolean insertarAlquiler(EntityManagerFactory emf) {
+        boolean insertado = false;
         Alquiler nuevoAlquiler = nuevoAlquiler();
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
-
 
         try {
             conexion = emf.createEntityManager();
@@ -205,7 +154,7 @@ public class AccesoAlquileres {
             nuevoAlquiler.setId(nuevoId(emf));
             conexion.persist(nuevoAlquiler);
             transaccion.commit();
-            System.out.println("Alquiler agregado con éxito.");
+            insertado = true;
         } catch (Exception e) {
             if (transaccion != null && transaccion.isActive()) {
                 transaccion.rollback();
@@ -213,6 +162,7 @@ public class AccesoAlquileres {
         } finally {
             conexion.close();
         }
+        return insertado;
     }
 
     public static void listarAlquileres(EntityManagerFactory emf) {
