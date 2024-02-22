@@ -164,10 +164,10 @@ public class AccesoAlquileres {
         double importeAlquiler = Teclado.leerReal("Importe del alquiler: ");
         int duracionContrato = Teclado.leerEntero("Duración del contrato: ");
 
-        return new Alquiler(0,nombreInquilino,direccionPiso,importeAlquiler,duracionContrato);
+        return new Alquiler(nombreInquilino,direccionPiso,importeAlquiler,duracionContrato);
     }
 
-    private static int nuevoId(EntityManagerFactory emf){
+    public static int nuevoId(EntityManagerFactory emf){
         EntityManager conexion = null;
         Integer nuevoId = 0;
 

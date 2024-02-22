@@ -12,8 +12,7 @@ public class Alquiler {
     Double importeAlquiler;
     int duracionContrato;
 
-    public Alquiler(int id, String nombreInquilino, String direccionPiso, Double importeAlquiler, int duracionContrato) {
-        this.id = id;
+    public Alquiler(String nombreInquilino, String direccionPiso, Double importeAlquiler, int duracionContrato) {
         this.nombreInquilino = nombreInquilino;
         this.direccionPiso = direccionPiso;
         this.importeAlquiler = importeAlquiler;

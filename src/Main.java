@@ -1,13 +1,15 @@
 import entrada.Teclado;
 import objectDB.AccesoAlquileres;
+import objectDB.Alquiler;
 import xml.AccesoXML;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class Main {
 
-    public static void menu(){
+    public static void mainMenu(){
         System.out.print("\n----------------");
         System.out.print("  Menú Principal  ");
         System.out.println("----------------");
@@ -25,7 +27,7 @@ public class Main {
         int opcion = 0;
 
         do {
-            menu();
+            mainMenu();
             opcion = Teclado.leerEntero("Elija una opción: ");
             switch (opcion) {
                 case 1:
@@ -36,7 +38,7 @@ public class Main {
                 case 3:
                     break;
                 case 4:
-                    AccesoXML.accionesXML(emf);
+                    accionesXML(emf);
                     break;
                 case 5:
                     break;
@@ -48,5 +50,38 @@ public class Main {
         }
         while (opcion != 5) ;
         emf.close();
+    }
+
+    private static void menuXML() {
+        System.out.print("\n------");
+        System.out.print("  Submenú Gestión de Información en XML  ");
+        System.out.println("------");
+        System.out.println("a. Exportar");
+        System.out.println("b. Importar");
+        System.out.println("x. Volver al menú principal");
+    }
+
+
+    public static void accionesXML(EntityManagerFactory emf){
+        String opcion = "";
+
+        do {
+            menuXML();
+            opcion = Teclado.leerCadena("Elija una opción: ");
+
+            switch (opcion) {
+                case "a":
+                    break;
+                case "b":
+                    List<Alquiler> listaAlquileres = AccesoXML.importarAlquileres(emf);
+                    System.out.println("Número de alquileres importados: " + listaAlquileres.size());
+                    break;
+                case "x":
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+            }
+        } while (!opcion.equals("x"));
     }
 }
