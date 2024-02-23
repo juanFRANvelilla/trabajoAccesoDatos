@@ -233,6 +233,46 @@ public class Main {
         }
     }
 
+    private static void menuServicios(){
+        System.out.print("\n-------");
+        System.out.print("Submenú de registro de servicios asociados");
+        System.out.println("-------");
+        System.out.println("a. Insertar servicio");
+        System.out.println("b. Actualizar servicio");
+        System.out.println("c. Eliminar servicio");
+        System.out.println("d. Eliminar servicios por ID de alquiler");
+        System.out.println("e. Listar servicios por ID de alquiler");
+        System.out.println("x. Volver al Menú Principal");
+        System.out.println();
+    }
+
+    private static void accionesServicios(EntityManagerFactory emf){
+        String opcion;
+        do{
+            menuServicios();
+            opcion = Teclado.leerCadena("Elija una opción: ");
+            switch (opcion) {
+                case "a":
+                    break;
+                case "b":
+                    break;
+                case "c":
+                    break;
+                case "d":
+                    break;
+                case "e":
+                    break;
+                case "x":
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+                    break;
+            }
+        } while(!opcion.equals("x"));
+
+    }
+
 
     private static void menuXML() {
         System.out.print("\n------");
