@@ -173,7 +173,6 @@ public class Main {
         do {
             menuComentarios();
             opcion = Teclado.leerCadena("Elija una opción: ");
-            // Evaluar la opción seleccionada
             switch (opcion) {
                 case "a":
                     id = Teclado.leerEntero("ID: ");
@@ -186,7 +185,7 @@ public class Main {
                             AccesoComentarios.insertarComentario(odb, new Comentario(id,idAlquiler,descripcion));
                             System.out.println("Comentario insertado en la base de datos correctamente.");
                         } else {
-                            System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
+                            System.out.println("No se ha encontrado ningun alquiler con ID: " + idAlquiler);
                         }
                     } else {
                         System.out.println("El ID del comentario ya existe. No se permiten ID duplicados");
