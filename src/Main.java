@@ -1,28 +1,34 @@
 import entrada.Teclado;
+import neodatisDB.AccesoComentarios;
+import neodatisDB.Comentario;
 import objectDB.AccesoAlquileres;
 import objectDB.Alquiler;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.ODBFactory;
 import xml.AccesoXML;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
     public static void mainMenu(){
         System.out.print("\n----------------");
-        System.out.print("  Menú Principal  ");
+        System.out.print(" Menú Principal ");
         System.out.println("----------------");
         System.out.println("1. Registro de Alquileres (con ObjectDB)");
         System.out.println("2. Registro de Comentarios (con Neodatis)");
         System.out.println("3. Registro de Servicios Asociados (con existDB)");
         System.out.println("4. Gestión de Información en XML (con Xtream)");
         System.out.println("5. Salir");
-        System.out.println("");
+        System.out.println();
     }
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("src/data/alquileres.odb");
+        ODB odb = ODBFactory.open("ComentariosInquilinos.neodatis");
 
         int opcion = 0;
 
@@ -34,6 +40,7 @@ public class Main {
                     accionesAlquileres(emf);
                     break;
                 case 2:
+                    accionesComentarios(emf, odb);
                     break;
                 case 3:
                     break;
@@ -50,6 +57,7 @@ public class Main {
         }
         while (opcion != 5) ;
         emf.close();
+        odb.close();
     }
 
     private static void menuObjectDB(){
@@ -62,7 +70,7 @@ public class Main {
         System.out.println("d. Listar alquileres");
         System.out.println("e. Buscar alquiler por nombre de inquilino");
         System.out.println("x. Volver al Menú Principal");
-        System.out.println("");
+        System.out.println();
     }
 
     public static void accionesAlquileres(EntityManagerFactory emf) {
@@ -146,9 +154,90 @@ public class Main {
         }
     }
 
+    public static void menuComentarios(){
+        System.out.print("\n------");
+        System.out.print(" Menú de comentarios ");
+        System.out.println("------");
+        System.out.println("a. Insertar comentario");
+        System.out.println("b. Eliminar comentario");
+        System.out.println("c. Buscar comentarios");
+        System.out.println("x. Volver al Menú Principal");
+    }
+
+    public static void accionesComentarios(EntityManagerFactory emf, ODB odb) {
+        List<Alquiler> alquileres = new ArrayList<Alquiler>();
+        List<Comentario> comentarios = new ArrayList<Comentario>();
+        Comentario comentario;
+        String opcion = "";
+        int id, idAlquiler;
+        do {
+            menuComentarios();
+            opcion = Teclado.leerCadena("Elija una opción: ");
+            // Evaluar la opción seleccionada
+            switch (opcion) {
+                case "a":
+                    id = Teclado.leerEntero("ID: ");
+                    if(AccesoComentarios.listarComentarioById(odb, id) == null){
+                        alquileres = AccesoAlquileres.listarAlquileres(emf);
+                        printearAlquileres(alquileres);
+                        idAlquiler = Teclado.leerEntero("ID alquiler: ");
+                        if(AccesoAlquileres.listarAlquilerById(emf,idAlquiler) != null){
+                            String descripcion = Teclado.leerCadena("Comentario: ");
+                            AccesoComentarios.insertarComentario(odb, new Comentario(id,idAlquiler,descripcion));
+                            System.out.println("Comentario insertado en la base de datos correctamente.");
+                        } else {
+                            System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
+                        }
+                    } else {
+                        System.out.println("El ID del comentario ya existe. No se permiten ID duplicados");
+                    }
+                    break;
+                case "b":
+                    comentarios = AccesoComentarios.listarComentarios(odb);
+                    printearComentarios(comentarios);
+                    id = Teclado.leerEntero("ID del comentario a eliminar: ");
+                    comentario = AccesoComentarios.listarComentarioById(odb,id);
+                    if(comentario != null){
+                        AccesoComentarios.borrarComentario(odb, comentario);
+                        System.out.println("Comentario borrado correctamente.");
+                    }
+                    else {
+                        System.out.println("No hay ningun comentario registrado con ID: " + id);
+                    }
+
+                    break;
+                case "c":
+                    alquileres = AccesoAlquileres.listarAlquileres(emf);
+                    printearAlquileres(alquileres);
+                    idAlquiler = Teclado.leerEntero("ID del alquiler: ");
+                    if(AccesoAlquileres.listarAlquilerById(emf,idAlquiler) != null){
+                        comentarios = AccesoComentarios.listarComentarioByIdAlquiler(odb,idAlquiler);
+                        printearComentarios(comentarios);
+                    } else {
+                        System.out.println("No se ha encontrado ningun comentario para el alquiler con ID: " + idAlquiler);
+                    }
+
+                    break;
+                case "x":
+                    System.out.println("Volviendo al Menú Principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida. Intente de nuevo.");
+            }
+        }
+        while(!opcion.equals("x"));
+    }
+
+    private static void printearComentarios(List<Comentario> comentarios) {
+        for(Comentario c : comentarios){
+            System.out.println(c.toString());
+        }
+    }
+
+
     private static void menuXML() {
         System.out.print("\n------");
-        System.out.print("  Submenú Gestión de Información en XML  ");
+        System.out.print(" Submenú Gestión de Información en XML ");
         System.out.println("------");
         System.out.println("a. Exportar");
         System.out.println("b. Importar");

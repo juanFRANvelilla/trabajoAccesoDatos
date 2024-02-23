@@ -30,6 +30,28 @@ public class AccesoAlquileres {
         return alquileres;
     }
 
+    public static Alquiler listarAlquilerById(EntityManagerFactory emf, int id) {
+        EntityManager conexion = null;
+        List<Alquiler> alquileres = new ArrayList<Alquiler>();
+        Alquiler alquiler = null;
+
+        try {
+            conexion = emf.createEntityManager();
+
+            String sentenciaJPQL = "SELECT a FROM Alquiler a WHERE a.id = :id";
+            TypedQuery<Alquiler> consulta = conexion.createQuery(sentenciaJPQL, Alquiler.class);
+            consulta.setParameter("id", id);
+            alquileres = consulta.getResultList();
+            alquiler = alquileres.get(0);
+        } catch (Exception e) {
+        } finally {
+            if (conexion != null && conexion.isOpen()) {
+                conexion.close();
+            }
+        }
+        return alquiler;
+    }
+
     public static Alquiler eliminarAlquiler(EntityManagerFactory emf, int id) {
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
