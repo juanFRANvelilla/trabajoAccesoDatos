@@ -9,8 +9,8 @@ import java.util.List;
 public class ListaAlquileres {
     private List<Alquiler> listaAlquileres;
 
-    public ListaAlquileres() {
-        this.listaAlquileres = new ArrayList<Alquiler>();
+    public ListaAlquileres(List<Alquiler> listaAlquileres) {
+        this.listaAlquileres = listaAlquileres;
     }
 
     public void add(Alquiler alquiler){

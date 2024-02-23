@@ -247,6 +247,7 @@ public class Main {
 
     public static void accionesXML(EntityManagerFactory emf){
         String opcion = "";
+        List<Alquiler> listaAlquileres;
 
         do {
             menuXML();
@@ -254,9 +255,12 @@ public class Main {
 
             switch (opcion) {
                 case "a":
+                    listaAlquileres = AccesoXML.exportarAlquileres(emf);
+                    System.out.println("Se han escrito " + listaAlquileres.size() +
+                            " empleados en el fichero XML.");
                     break;
                 case "b":
-                    List<Alquiler> listaAlquileres = AccesoXML.importarAlquileres(emf);
+                    listaAlquileres = AccesoXML.importarAlquileres(emf);
                     System.out.println("Número de alquileres importados: " + listaAlquileres.size());
                     break;
                 case "x":

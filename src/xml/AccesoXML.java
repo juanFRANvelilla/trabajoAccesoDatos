@@ -3,20 +3,20 @@ package xml;
 import com.objectdb.o._RollbackException;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import entrada.Teclado;
 import objectDB.AccesoAlquileres;
 import objectDB.Alquiler;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccesoXML {
-    public static List<Alquiler> importarAlquileres(EntityManagerFactory emf){
+    private static final String URLXML = "src/data/alquileres.xml";
+    private static XStream configurarXStream(){
         XStream xStream = new XStream();
 
         xStream.alias("alquileres", ListaAlquileres.class);
@@ -27,17 +27,21 @@ public class AccesoXML {
         xStream.aliasField("duracionContrato", Alquiler.class, "duracionContrato");
         xStream.addImplicitCollection(ListaAlquileres.class, "listaAlquileres");
         xStream.addPermission(AnyTypePermission.ANY);
+        return  xStream;
+    }
+
+    public static List<Alquiler> importarAlquileres(EntityManagerFactory emf){
+        EntityManager conexion = null;
+        EntityTransaction transaccion = null;
+
+        XStream xStream = configurarXStream();
         xStream.omitField(Alquiler.class, "id");
 
         List<Alquiler> listaAlquileres = new ArrayList<Alquiler>();
 
-        EntityManager conexion = null;
-        EntityTransaction transaccion = null;
-
         try{
             ListaAlquileres objetoListaAlquileres =
-                    (ListaAlquileres) xStream
-                            .fromXML(new FileInputStream("src/data/alquileres.xml"));
+                    (ListaAlquileres) xStream.fromXML(new FileInputStream(URLXML));
 
             listaAlquileres = objetoListaAlquileres.getListaAlquileres();
 
@@ -77,5 +81,20 @@ public class AccesoXML {
             }
         }
         return listaAlquileres;
+    }
+
+    public static List<Alquiler> exportarAlquileres(EntityManagerFactory emf){
+        XStream xStream = configurarXStream();
+        List<Alquiler> alquileresBd = AccesoAlquileres.listarAlquileres(emf);
+
+        ListaAlquileres listaAlquileres = new ListaAlquileres(alquileresBd);
+
+        try{
+            xStream.toXML(listaAlquileres, new FileOutputStream(URLXML));
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return alquileresBd;
     }
 }
