@@ -70,6 +70,7 @@ public class Main {
         int id;
         String nombrePropietario;
         Alquiler alquiler;
+        List<Alquiler> alquileres;
         do{
             menuObjectDB();
             opcion = Teclado.leerCadena("Elija una opción: ");
@@ -83,7 +84,8 @@ public class Main {
                     }
                     break;
                 case "b":
-                    AccesoAlquileres.listarAlquileres(emf);
+                    alquileres = AccesoAlquileres.listarAlquileres(emf);
+                    printearAlquileres(alquileres);
                     id = Teclado.leerEntero("ID del alquiler a actualizar: ");
                     alquiler = AccesoAlquileres.actualizarAlquilerId(emf, id);
                     if(alquiler != null){
@@ -94,16 +96,25 @@ public class Main {
                     }
                     break;
                 case "c":
-                    AccesoAlquileres.listarAlquileres(emf);
+                    alquileres = AccesoAlquileres.listarAlquileres(emf);
+                    printearAlquileres(alquileres);
                     id = Teclado.leerEntero("ID del alquiler a eliminar: ");
-                    AccesoAlquileres.eliminarAlquiler(emf, id);
+                    alquiler = AccesoAlquileres.eliminarAlquiler(emf, id);
+                    if(alquiler != null){
+                        System.out.println("Se ha eliminado el alquiler: \n" + alquiler.toString());
+                    }
+                    else{
+                        System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
+                    }
                     break;
                 case "d":
-                    AccesoAlquileres.listarAlquileres(emf);
+                    alquileres = AccesoAlquileres.listarAlquileres(emf);
+                    printearAlquileres(alquileres);
                     break;
                 case "e":
                     nombrePropietario = Teclado.leerCadena("Nombre del propietario del que desees consultar alquileres: ");
-                    AccesoAlquileres.listarAlquilerByNombre(emf,nombrePropietario);
+                    alquileres = AccesoAlquileres.listarAlquilerByNombre(emf,nombrePropietario);
+                    printearAlquileres(alquileres);
                     break;
                 case "x":
                     System.out.println("Volviendo al menú principal...");
@@ -115,6 +126,24 @@ public class Main {
 
         } while (!opcion.equals("x"));
 
+    }
+
+    private static void printearAlquileres(List<Alquiler> alquileres) {
+        if (alquileres.size() == 0) {
+            System.out.println("No se ha encontrado ningun alquiler en la base de datos.");
+        }
+        else {
+            for (Alquiler alquiler : alquileres) {
+                System.out.println(alquiler.toString());
+            }
+            if(alquileres.size() == 1){
+                System.out.println("Se ha consultado " + alquileres.size() +
+                        " alquiler de la base de datos");
+            } else{
+                System.out.println("Se han consultado " + alquileres.size() +
+                        " alquileres de la base de datos");
+            }
+        }
     }
 
     private static void menuXML() {

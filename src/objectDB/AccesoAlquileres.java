@@ -3,13 +3,15 @@ package objectDB;
 import entrada.Teclado;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccesoAlquileres {
 
 
-    public static void listarAlquilerByNombre(EntityManagerFactory emf, String nombrePropietario) {
+    public static List<Alquiler> listarAlquilerByNombre(EntityManagerFactory emf, String nombrePropietario) {
         EntityManager conexion = null;
+        List<Alquiler> alquileres = new ArrayList<Alquiler>();
 
         try {
             conexion = emf.createEntityManager();
@@ -17,15 +19,7 @@ public class AccesoAlquileres {
             String sentenciaJPQL = "SELECT a FROM Alquiler a WHERE a.nombreInquilino = :nombre";
             TypedQuery<Alquiler> consulta = conexion.createQuery(sentenciaJPQL, Alquiler.class);
             consulta.setParameter("nombre", nombrePropietario);
-            List<Alquiler> alquileres = consulta.getResultList();
-
-            if(alquileres.size() == 0){
-                System.out.println("No se ha encontrado ningun alquiler con nombre de propietario: " + nombrePropietario);
-            } else {
-                for(Alquiler alquiler: alquileres){
-                    System.out.println(alquiler.toString());
-                }
-            }
+            alquileres = consulta.getResultList();
         } catch (Exception e) {
             System.out.println("Error al realizar la consulta: " + e.getMessage());
         } finally {
@@ -33,11 +27,13 @@ public class AccesoAlquileres {
                 conexion.close();
             }
         }
+        return alquileres;
     }
 
-    public static void eliminarAlquiler(EntityManagerFactory emf, int id) {
+    public static Alquiler eliminarAlquiler(EntityManagerFactory emf, int id) {
         EntityManager conexion = null;
         EntityTransaction transaccion = null;
+        Alquiler alquiler = null;
 
         try {
             conexion = emf.createEntityManager();
@@ -49,24 +45,22 @@ public class AccesoAlquileres {
 
             List<Alquiler> alquileres = consulta.getResultList();
 
-            Alquiler alquiler = alquileres.get(0);
+            alquiler = alquileres.get(0);
 
             transaccion = conexion.getTransaction();
             transaccion.begin();
             conexion.remove(alquiler);
             transaccion.commit();
-
-            System.out.println("Se ha eliminado el alquiler: \n" + alquiler.toString());
         } catch (Exception e) {
             if (transaccion != null) {
                 transaccion.rollback();
             }
-            System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
         } finally {
             if (conexion != null) {
                 conexion.close();
             }
         }
+        return alquiler;
     }
 
     public static Alquiler actualizarAlquilerId(EntityManagerFactory emf, int id) {
@@ -165,23 +159,15 @@ public class AccesoAlquileres {
         return insertado;
     }
 
-    public static void listarAlquileres(EntityManagerFactory emf) {
+    public static List<Alquiler> listarAlquileres(EntityManagerFactory emf) {
+        List<Alquiler> alquileres = new ArrayList<Alquiler>();
         EntityManager conexion = null;
         try {
             conexion = emf.createEntityManager();
             TypedQuery<Alquiler> consulta = conexion.createQuery("SELECT a FROM Alquiler a",
                     Alquiler.class);
-            List<Alquiler> alquileres = consulta.getResultList();
-            if (alquileres.size() == 0) {
-                System.out.println("No hay ningun alquiler en la base de datos.");
-            }
-            else {
-                for (Alquiler alquiler : alquileres) {
-                    System.out.println(alquiler.toString());
-                }
-                System.out.println("Se han consultado " + alquileres.size() +
-                        " alquileres de la base de datos");
-            }
+            alquileres = consulta.getResultList();
+
         }
         catch (PersistenceException e) {
             System.err.println("La base de datos data/alquileres.odb no existe.");
@@ -191,5 +177,6 @@ public class AccesoAlquileres {
                 conexion.close();
             }
         }
+        return alquileres;
     }
 }
