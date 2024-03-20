@@ -1,0 +1,36 @@
+------------------------------------------------------------------------------------------------------------------------
+
+[2024-02-24 19:00:45 #1 store] 
+Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is opened by 19032@LAPTOP-MMN745F5
+
+[2024-02-24 19:00:45 #2 store] 
+Configuration path: ?
+
+[2024-02-24 19:00:45 #3 type] 
+Type objectDB.Alquiler is not enhanced.
+
+[2024-02-24 19:01:36 #4 store] 
+Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is closed by 19032@LAPTOP-MMN745F5
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2024-02-24 19:50:53 #1 store] 
+Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is opened by 1948@LAPTOP-MMN745F5
+
+[2024-02-24 19:50:53 #2 store] 
+Configuration path: ?
+
+[2024-02-24 19:50:53 #3 type] 
+Type objectDB.Alquiler is not enhanced.
+
+------------------------------------------------------------------------------------------------------------------------
+
+[2024-02-24 20:45:27 #1 store] 
+Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is opened by 18076@LAPTOP-MMN745F5
+
+[2024-02-24 20:45:27 #2 store] 
+Configuration path: ?
+
+[2024-02-24 20:45:27 #3 type] 
+Type objectDB.Alquiler is not enhanced.
+
