@@ -12,3 +12,14 @@ Type objectDB.Alquiler is not enhanced.
 [2024-03-20 16:16:46 #4 store] 
 Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is closed by 14604@LAPTOP-MMN745F5
 
+------------------------------------------------------------------------------------------------------------------------
+
+[2024-03-20 16:42:33 #1 store] 
+Database 'C:\Users\juanf\IdeaProjects\trabajoAccesoDatos\src\data\alquileres.odb' is opened by 14996@LAPTOP-MMN745F5
+
+[2024-03-20 16:42:33 #2 store] 
+Configuration path: ?
+
+[2024-03-20 16:42:33 #3 type] 
+Type objectDB.Alquiler is not enhanced.
+

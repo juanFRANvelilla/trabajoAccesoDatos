@@ -30,6 +30,7 @@ public class AccesoXML {
         return  xStream;
     }
 
+
     public static List<Alquiler> importarAlquileres(EntityManagerFactory emf){
         EntityManager conexion = null;
         EntityTransaction transaccion = null;

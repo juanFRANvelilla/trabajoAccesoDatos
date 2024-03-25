@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<alumnos>
+    <alumno>
+        <codigo>1</codigo>
+        <nombre>Isabel López</nombre>
+        <nota>8.3298</nota>
+    </alumno>
+    <alumno>
+        <codigo>2</codigo>
+        <nombre>Pedro Gracia</nombre>
+        <nota>5.7834</nota>
+    </alumno>
+    <alumno>
+        <codigo>3</codigo>
+        <nombre>Pilar Sánchez</nombre>
+        <nota>6.1234</nota>
+    </alumno>
+    <alumno>
+        <codigo>4</codigo>
+        <nombre>Francisco Moreno</nombre>
+        <nota>7.4532</nota>
+    </alumno>
+    <alumno>
+        <codigo>5</codigo>
+        <nombre>María Díaz</nombre>
+        <nota>9.8765</nota>
+    </alumno>
+    <alumno>
+        <codigo>6</codigo>
+        <nombre>Jorge Martín</nombre>
+        <nota>4.5432</nota>
+    </alumno>
+</alumnos>
