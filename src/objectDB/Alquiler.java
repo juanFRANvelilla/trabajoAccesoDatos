@@ -7,12 +7,14 @@ import javax.persistence.Id;
 public class Alquiler {
     @Id
     int id;
+    String tipoContrato;
     String nombreInquilino;
     String direccionPiso;
     Double importeAlquiler;
     int duracionContrato;
 
-    public Alquiler(String nombreInquilino, String direccionPiso, Double importeAlquiler, int duracionContrato) {
+    public Alquiler(String tipoContrato, String nombreInquilino, String direccionPiso, Double importeAlquiler, int duracionContrato) {
+        this.tipoContrato = tipoContrato;
         this.nombreInquilino = nombreInquilino;
         this.direccionPiso = direccionPiso;
         this.importeAlquiler = importeAlquiler;
@@ -61,8 +63,9 @@ public class Alquiler {
 
     @Override
     public String toString() {
-        return "ALQUILER {" +
+        return "Alquiler{" +
                 "id=" + id +
+                ", tipoContrato='" + tipoContrato + '\'' +
                 ", nombreInquilino='" + nombreInquilino + '\'' +
                 ", direccionPiso='" + direccionPiso + '\'' +
                 ", importeAlquiler=" + importeAlquiler +

@@ -17,6 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccesoServicios {
+
+    public static void borrarServicios(XPathQueryService service){
+        try{
+            String sentenciaBorrarServicios =
+                    "update delete " +
+                            "/ServiciosAsociados/Servicio";
+            service.query(sentenciaBorrarServicios);
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static List<Servicio> listarServicios(Collection coleccion, XPathQueryService service){
         List<Servicio> servicios = new ArrayList<Servicio>();
         try {
@@ -194,7 +205,7 @@ public class AccesoServicios {
     }
 
 
-    public static void insertarServicio(XPathQueryService service, Servicio servicio, EntityManagerFactory emf) {
+    public static void insertarServicio(XPathQueryService service, Servicio servicio) {
         try {
             int servicioId = servicio.getId();
             String tipoServicio = servicio.getTipoServicio();

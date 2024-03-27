@@ -1,3 +1,5 @@
+import dom.ExportarDom;
+import dom.ImportarDom;
 import entrada.Teclado;
 import neodatisDB.AccesoComentarios;
 import neodatisDB.Comentario;
@@ -16,6 +18,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
 
@@ -34,7 +37,7 @@ public class Main {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("src/data/alquileres.odb");
         ODB odb = ODBFactory.open("ComentariosInquilinos.neodatis");
-
+        Collection coleccion = null;
         int opcion = 0;
 
         do {
@@ -42,13 +45,44 @@ public class Main {
             opcion = Teclado.leerEntero("Elija una opción: ");
             switch (opcion) {
                 case 1:
-                    accionesAlquileres(emf);
+                    try {
+                        Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
+                        Database database = (Database) cl.newInstance();
+                        DatabaseManager.registerDatabase(database);
+
+                        String url = "xmldb:exist://localhost:8080/exist/xmlrpc/db/serviciosAsociados";
+                        coleccion = DatabaseManager.getCollection(url, "admin", "admin");
+                        XPathQueryService service =
+                                (XPathQueryService) coleccion.getService("XPathQueryService", "1.0");
+                        if (coleccion != null) {
+                            System.out.println("Conectado con exito a la coleccion de la base de datos");
+                            accionesAlquileres(emf, odb, service);
+                        }
+
+                    } catch (XMLDBException e) {
+                        System.out.println("Error al conectarte a la base de datos xistDB");
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (InstantiationException e) {
+                        throw new RuntimeException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        if (coleccion != null) {
+                            try {
+                                coleccion.close();
+                            }
+                            catch (XMLDBException xmldbe) {
+                                System.out.println("Error de base de datos XML: " + xmldbe.getMessage());
+                            }
+                        }
+                    }
+
                     break;
                 case 2:
                     accionesComentarios(emf, odb);
                     break;
                 case 3:
-                    Collection coleccion = null;
                     try {
                         Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
                         Database database = (Database) cl.newInstance();
@@ -99,6 +133,7 @@ public class Main {
         emf.close();
     }
 
+
     private static void menuObjectDB(){
         System.out.print("\n---------");
         System.out.print("  Submenú de Alquileres  ");
@@ -112,7 +147,7 @@ public class Main {
         System.out.println();
     }
 
-    public static void accionesAlquileres(EntityManagerFactory emf) {
+    public static void accionesAlquileres(EntityManagerFactory emf, ODB odb, XPathQueryService service) {
         String opcion = "";
         int id;
         String nombrePropietario;
@@ -146,11 +181,19 @@ public class Main {
                     id = Teclado.leerEntero("ID del alquiler a eliminar: ");
                     alquiler = AccesoAlquileres.eliminarAlquiler(emf, id);
                     if(alquiler != null){
-                        System.out.println("Se ha eliminado el alquiler: \n" + alquiler.toString());
+                        List<Comentario> comentariosEliminar = AccesoComentarios.listarComentarioByIdAlquiler(odb,id);
+                        for(Comentario c: comentariosEliminar){
+                            AccesoComentarios.borrarComentario(odb,c);
+                        }
+                        AccesoServicios.eliminarServicioByIdAlquiler(service, id);
+
+                        System.out.println("Se ha eliminado el alquiler: \n" + alquiler.toString() + " con sus comentarios y servicios.");
                     }
                     else{
                         System.out.println("No se ha encontrado ningun alquiler con ID: " + id);
                     }
+
+
                     break;
                 case "d":
                     mostrarAlquileres(emf);
@@ -211,6 +254,8 @@ public class Main {
         System.out.println("a. Insertar comentario");
         System.out.println("b. Eliminar comentario");
         System.out.println("c. Buscar comentarios");
+        System.out.println("d. Exportar comentarios dom");
+        System.out.println("e. Importar comentarios dom");
         System.out.println("x. Volver al Menú Principal");
     }
 
@@ -224,17 +269,34 @@ public class Main {
             opcion = Teclado.leerCadena("Elija una opción: ");
             switch (opcion) {
                 case "a":
-                    id = Teclado.leerEntero("ID: ");
-                    if(AccesoComentarios.listarComentarioById(odb, id) == null){
-                        mostrarAlquileres(emf);
-                        idAlquiler = Teclado.leerEntero("ID alquiler: ");
-                        if(comprobarIdAlquiler(emf, idAlquiler)) {
-                            String descripcion = Teclado.leerCadena("Comentario: ");
-                            AccesoComentarios.insertarComentario(odb, new Comentario(id,idAlquiler,descripcion));
-                            System.out.println("Comentario insertado en la base de datos correctamente.");
+//                    id = Teclado.leerEntero("ID: ");
+//                    if(AccesoComentarios.listarComentarioById(odb, id) == null){
+//                        mostrarAlquileres(emf);
+//                        idAlquiler = Teclado.leerEntero("ID alquiler: ");
+//                        if(comprobarIdAlquiler(emf, idAlquiler)) {
+//                            String descripcion = Teclado.leerCadena("Comentario: ");
+//                            AccesoComentarios.insertarComentario(odb, new Comentario(id,idAlquiler,descripcion));
+//                            System.out.println("Comentario insertado en la base de datos correctamente.");
+//                        }
+//                    } else {
+//                        System.out.println("El ID del comentario ya existe. No se permiten ID duplicados");
+//                    }
+                    mostrarAlquileres(emf);
+                    idAlquiler = Teclado.leerEntero("ID alquiler: ");
+                    if(comprobarIdAlquiler(emf, idAlquiler)) {
+                        Random random = new Random();
+                        id = random.nextInt(500) + 1;
+                        boolean idAdecuado = false;
+                        while(!idAdecuado){
+                            if(AccesoComentarios.listarComentarioById(odb, id) == null){
+                                idAdecuado = true;
+                            } else {
+                                id = random.nextInt(500) + 1;
+                            }
                         }
-                    } else {
-                        System.out.println("El ID del comentario ya existe. No se permiten ID duplicados");
+                        String descripcion = Teclado.leerCadena("Comentario: ");
+                        AccesoComentarios.insertarComentario(odb, new Comentario(id,idAlquiler,descripcion));
+                        System.out.println("Comentario insertado en la base de datos correctamente.");
                     }
                     break;
                 case "b":
@@ -258,7 +320,22 @@ public class Main {
                         comentarios = AccesoComentarios.listarComentarioByIdAlquiler(odb,idAlquiler);
                         printearComentarios(comentarios);
                     }
+                    break;
+                case"d":
+                    comentarios = AccesoComentarios.listarComentarios(odb);
+                    ExportarDom.exportarComentarios(comentarios);
+                    break;
+                case"e":
+                    List<Comentario> comentariosImportar = ImportarDom.importarComentarios();
+                    List<Comentario> comentariosEliminar = AccesoComentarios.listarComentarios(odb);
+                    for(Comentario c : comentariosEliminar){
+                        AccesoComentarios.borrarComentario(odb,c);
+                    }
 
+                    for(Comentario c: comentariosImportar){
+                        AccesoComentarios.insertarComentario(odb, c);
+                    }
+                    System.out.println("Se han importado " + comentariosImportar.size() + " comentarios");
                     break;
                 case "x":
                     System.out.println("Volviendo al Menú Principal...");
@@ -299,6 +376,10 @@ public class Main {
         System.out.println("c. Eliminar servicio");
         System.out.println("d. Eliminar servicios por ID de alquiler");
         System.out.println("e. Listar servicios por ID de alquiler");
+        System.out.println("f. Listar servicios por referencia de tipo de servicio");
+        System.out.println("g. Exportar servicios dom");
+        System.out.println("h. Importar servicios dom");
+        System.out.println("i. Listar servicos cuyo alquiler tiene un costo superior a la media");
         System.out.println("x. Volver al Menú Principal");
         System.out.println();
     }
@@ -325,7 +406,7 @@ public class Main {
                         idAlquiler = Teclado.leerEntero("ID del alquiler: ");
                         if(comprobarIdAlquiler(emf, idAlquiler)) {
                             servicio = crearServicio(idServicio, idAlquiler);
-                            AccesoServicios.insertarServicio(service, servicio, emf);
+                            AccesoServicios.insertarServicio(service, servicio);
                             System.out.println("Se ha insetado correctamente el servicio: \n" + servicio.toString());
                         }
                     }
@@ -386,9 +467,24 @@ public class Main {
                     servicios = AccesoServicios.listarServiciosByServicio(service,nombreServicio);
                     printearServicios(servicios);
                     break;
+                case "g":
+                    servicios = AccesoServicios.listarServicios(coleccion, service);
+                    ExportarDom.exportarServicios(servicios);
+                    break;
+                case "h":
+                    servicios = ImportarDom.importarServicios();
+                    AccesoServicios.borrarServicios(service);
+                    for (Servicio s : servicios){
+                        AccesoServicios.insertarServicio(service, s);
+                    }
+                    System.out.println("Se han importado " + servicios.size() + " servicios");
+                    break;
                 case "x":
                     System.out.println("Volviendo al menú principal...");
                     break;
+
+                    case "i":
+                        break;
                 default:
                     System.out.println("Opción no válida. Intente de nuevo.");
                     break;

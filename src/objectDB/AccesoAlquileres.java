@@ -124,12 +124,23 @@ public class AccesoAlquileres {
     }
 
     private static Alquiler nuevoAlquiler(){
+        boolean tipoContartoValido = false;
+        String tipoContrato = "";
+        while (!tipoContartoValido){
+            tipoContrato = Teclado.leerCadena("Tipo de contrato: ");
+            if (tipoContrato.equals("mensual") || tipoContrato.equals("anual") || tipoContrato.equals("temporada")){
+                tipoContartoValido = true;
+            }
+            else {
+                System.out.println("Tipo de contrato no válido. Introduzca mensual, anual o temporada.");
+            }
+        }
         String nombreInquilino = Teclado.leerCadena("Nombre del inquilino: ");
         String direccionPiso = Teclado.leerCadena("Direccion del piso: ");
         double importeAlquiler = Teclado.leerReal("Importe del alquiler: ");
         int duracionContrato = Teclado.leerEntero("Duración del contrato: ");
 
-        return new Alquiler(nombreInquilino,direccionPiso,importeAlquiler,duracionContrato);
+        return new Alquiler(tipoContrato,nombreInquilino,direccionPiso,importeAlquiler,duracionContrato);
     }
 
     public static int nuevoId(EntityManagerFactory emf){

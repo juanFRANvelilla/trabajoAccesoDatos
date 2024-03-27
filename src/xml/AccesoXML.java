@@ -21,6 +21,7 @@ public class AccesoXML {
 
         xStream.alias("alquileres", ListaAlquileres.class);
         xStream.alias("alquiler", Alquiler.class);
+        xStream.aliasField("tipoContrato", Alquiler.class, "tipoContrato");
         xStream.aliasField("nombreInquilino", Alquiler.class, "nombreInquilino");
         xStream.aliasField("direccionPiso", Alquiler.class, "direccionPiso");
         xStream.aliasField("importeAlquiler", Alquiler.class, "importeAlquiler");
@@ -44,12 +45,15 @@ public class AccesoXML {
                     (ListaAlquileres) xStream.fromXML(new FileInputStream(URLXML));
 
             listaAlquileres = objetoListaAlquileres.getListaAlquileres();
+            for(Alquiler alquiler: listaAlquileres){
+                System.out.println(alquiler.toString());
+            }
 
             conexion = emf.createEntityManager();
             transaccion = conexion.getTransaction();
             transaccion.begin();
 
-//            conexion.createQuery("DELETE FROM Alquiler").executeUpdate();
+            conexion.createQuery("DELETE FROM Alquiler").executeUpdate();
             int id = AccesoAlquileres.nuevoId(emf);
 
             for(Alquiler alquiler: listaAlquileres){
@@ -87,6 +91,7 @@ public class AccesoXML {
     public static List<Alquiler> exportarAlquileres(EntityManagerFactory emf){
         XStream xStream = configurarXStream();
         List<Alquiler> alquileresBd = AccesoAlquileres.listarAlquileres(emf);
+
 
         ListaAlquileres listaAlquileres = new ListaAlquileres(alquileresBd);
 
