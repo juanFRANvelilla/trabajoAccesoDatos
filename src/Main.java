@@ -381,6 +381,11 @@ public class Main {
                         printearServicios(servicios);
                     }
                     break;
+                case "f":
+                    String nombreServicio = Teclado.leerCadena("Tipo de servicio: ");
+                    servicios = AccesoServicios.listarServiciosByServicio(service,nombreServicio);
+                    printearServicios(servicios);
+                    break;
                 case "x":
                     System.out.println("Volviendo al menú principal...");
                     break;

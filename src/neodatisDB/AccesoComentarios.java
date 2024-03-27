@@ -11,9 +11,11 @@ import java.util.List;
 
 public class AccesoComentarios {
 
+
     public static void insertarComentario(ODB odb, Comentario comentario){
         odb.store(comentario);
     }
+
 
     public static Comentario listarComentarioById(ODB odb, int id){
         Comentario comentario = null;

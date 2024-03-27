@@ -40,6 +40,31 @@ public class AccesoServicios {
         return servicios;
     }
 
+    public static List<Servicio> listarServiciosByServicio(XPathQueryService service, String servico){
+        List<Servicio> servicios = new ArrayList<Servicio>();
+        try {
+            String sentenciaBuscarServicio =
+                    "for $s in /ServiciosAsociados/Servicio[contains(TipoServicio, '" + servico + "')]" +
+                            "order by number($s/CostoMensual) descending " +
+                            "return $s";
+
+
+
+            ResourceSet resultados = service.query(sentenciaBuscarServicio);
+
+            ResourceIterator iterador = resultados.getIterator();
+            while (iterador.hasMoreResources()) {
+                Resource recurso = iterador.nextResource();
+                String xml = (String) recurso.getContent();
+                Servicio servicio = obtenerServicioDeXml(xml);
+                servicios.add(servicio);
+            }
+        } catch (XMLDBException e) {
+            throw new RuntimeException(e);
+        }
+        return servicios;
+    }
+
     public static boolean actualizarServicio(Collection coleccion, XPathQueryService service, Servicio servicio){
         try{
             String sentenciaActualizarServicio =
@@ -63,6 +88,9 @@ public class AccesoServicios {
         }
         return false;
     }
+
+
+
 
 
 

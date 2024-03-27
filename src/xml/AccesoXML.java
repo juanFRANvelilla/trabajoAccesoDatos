@@ -83,6 +83,7 @@ public class AccesoXML {
         return listaAlquileres;
     }
 
+
     public static List<Alquiler> exportarAlquileres(EntityManagerFactory emf){
         XStream xStream = configurarXStream();
         List<Alquiler> alquileresBd = AccesoAlquileres.listarAlquileres(emf);
